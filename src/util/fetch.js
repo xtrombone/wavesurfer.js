@@ -151,7 +151,11 @@ export default function fetchFile(options) {
             instance.response = response;
 
             let progressAvailable = true;
-            if (!response.body) {
+            if (
+                !response.body ||
+                document.documentMode ||
+                /Edge/.test(navigator.userAgent)
+            ) {
                 // ReadableStream is not yet supported in this browser
                 // see https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream
                 progressAvailable = false;
