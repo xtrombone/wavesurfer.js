@@ -307,6 +307,7 @@ export default class MultiCanvas extends Drawer {
                 const first = start;
                 const last = end;
                 let i = first;
+                let halfHmod = 1;
 
                 for (i; i < last; i += step) {
                     const peak =
@@ -318,11 +319,16 @@ export default class MultiCanvas extends Drawer {
                     if (h == 0 && this.params.barMinHeight)
                         h = this.params.barMinHeight;
 
+                    if (!this.params.reflection) {
+                      halfHmod = 2;
+                      h = Math.abs(h);
+                    }
+
                     this.fillRect(
                         i + this.halfPixel,
-                        halfH - h + offsetY,
+                        halfH * halfHmod - h * halfHmod + offsetY,
                         bar + this.halfPixel,
-                        h * 2,
+                        h * 2 * halfHmod,
                         this.barRadius
                     );
                 }

@@ -97,6 +97,7 @@ import MediaElementWebAudio from './mediaelement-webaudio';
  * @property {string} progressColor='#555' The fill color of the part of the
  * waveform behind the cursor. When `progressColor` and `waveColor` are the same
  * the progress wave is not rendered at all.
+ * @property {boolean} reflection=true toggle mirrored waveform
  * @property {boolean} removeMediaElementOnDestroy=true Set to false to keep the
  * media element in the DOM when the player is destroyed. This is useful when
  * reusing an existing media element via the `loadMediaElement` method.
@@ -257,6 +258,7 @@ export default class WaveSurfer extends util.Observer {
             window.devicePixelRatio || screen.deviceXDPI / screen.logicalXDPI,
         plugins: [],
         progressColor: '#555',
+        reflection: true,
         removeMediaElementOnDestroy: true,
         renderer: MultiCanvas,
         responsive: false,

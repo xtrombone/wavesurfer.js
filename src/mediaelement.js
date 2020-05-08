@@ -140,6 +140,7 @@ export default class MediaElement extends WebAudio {
         media.preload = preload == null ? 'auto' : preload;
         media.src = url;
         media.style.width = '100%';
+        media.crossOrigin = 'anonymous';
 
         const prevMedia = container.querySelector(this.mediaType);
         if (prevMedia) {
@@ -188,6 +189,7 @@ export default class MediaElement extends WebAudio {
             // Resets the media element and restarts the media resource. Any
             // pending events are discarded. How much media data is fetched is
             // still affected by the preload attribute.
+            console.log('MEDIA LOAD', media);
             media.load();
         }
 
