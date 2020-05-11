@@ -30,8 +30,7 @@
     "doc": "esdoc",
     "test": "karma start karma.conf.js",
     "prepublishOnly": "not-in-install && npm run build || in-install",
-    "prepare": "npm run build",
-    "postinstall": "yarn run build:main"
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",
