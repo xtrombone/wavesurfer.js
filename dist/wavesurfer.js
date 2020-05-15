@@ -1826,6 +1826,18 @@ var MediaElementWebAudio = /*#__PURE__*/function (_MediaElement) {
       this.sourceMediaElement.connect(this.analyser);
     }
     /**
+     * Set the audio volume
+     * overwrite inherited method from mediaelement.js
+     *
+     * @param {number} value A floating point value between 0 and 1.
+     */
+
+  }, {
+    key: "setVolume",
+    value: function setVolume(value) {
+      this.gainNode.gain.setValueAtTime(value, this.ac.currentTime);
+    }
+    /**
      * This is called when wavesurfer is destroyed
      *
      */

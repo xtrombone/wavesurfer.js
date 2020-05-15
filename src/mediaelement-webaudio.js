@@ -61,6 +61,17 @@ export default class MediaElementWebAudio extends MediaElement {
     }
 
     /**
+     * Set the audio volume
+     * overwrite inherited method from mediaelement.js
+     *
+     * @param {number} value A floating point value between 0 and 1.
+     */
+    setVolume(value) {
+        this.gainNode.gain.setValueAtTime(value, this.ac.currentTime);
+    }
+
+
+    /**
      * This is called when wavesurfer is destroyed
      *
      */
