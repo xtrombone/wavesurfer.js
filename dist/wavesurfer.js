@@ -1,5 +1,5 @@
 /*!
- * wavesurfer.js 3.3.3 (2020-05-11)
+ * wavesurfer.js 3.3.3 (2020-05-15)
  * https://github.com/katspaugh/wavesurfer.js
  * @license BSD-3-Clause
  */
@@ -12,7 +12,7 @@
 		exports["WaveSurfer"] = factory();
 	else
 		root["WaveSurfer"] = factory();
-})(window, function() {
+})(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -5960,8 +5960,15 @@ var WebAudio = /*#__PURE__*/function (_util$Observer) {
         for (i = first; i <= last; i++) {
           var start = ~~(i * sampleSize);
           var end = ~~(start + sampleSize);
-          var min = 0;
-          var max = 0;
+          /**
+           * Initialize the max and min to the first sample of this
+           * subrange, so that even if the samples are entirely
+           * on one side of zero, we still return the true max and
+           * min values in the subrange.
+           */
+
+          var min = chan[start];
+          var max = min;
           var j = void 0;
 
           for (j = start; j < end; j += sampleStep) {

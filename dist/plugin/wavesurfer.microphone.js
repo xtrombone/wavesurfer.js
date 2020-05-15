@@ -1,5 +1,5 @@
 /*!
- * wavesurfer.js microphone plugin 3.3.3 (2020-05-11)
+ * wavesurfer.js microphone plugin 3.3.3 (2020-05-15)
  * https://github.com/katspaugh/wavesurfer.js
  * @license BSD-3-Clause
  */
@@ -12,7 +12,7 @@
 		exports["microphone"] = factory();
 	else
 		root["WaveSurfer"] = root["WaveSurfer"] || {}, root["WaveSurfer"]["microphone"] = factory();
-})(window, function() {
+})(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};

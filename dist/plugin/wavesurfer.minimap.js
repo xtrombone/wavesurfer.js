@@ -1,5 +1,5 @@
 /*!
- * wavesurfer.js minimap plugin 3.3.3 (2020-05-11)
+ * wavesurfer.js minimap plugin 3.3.3 (2020-05-15)
  * https://github.com/katspaugh/wavesurfer.js
  * @license BSD-3-Clause
  */
@@ -12,7 +12,7 @@
 		exports["minimap"] = factory();
 	else
 		root["WaveSurfer"] = root["WaveSurfer"] || {}, root["WaveSurfer"]["minimap"] = factory();
-})(window, function() {
+})(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -190,6 +190,7 @@ var MinimapPlugin = /*#__PURE__*/function () {
 
     this.params = Object.assign({}, ws.params, {
       showRegions: false,
+      regionsPluginName: params.regionsPluginName || 'regions',
       showOverview: false,
       overviewBorderColor: 'green',
       overviewBorderSize: 2,
@@ -232,6 +233,7 @@ var MinimapPlugin = /*#__PURE__*/function () {
 
     this.renderEvent = ws.params.backend === 'MediaElement' ? 'waveform-ready' : 'ready';
     this.overviewRegion = null;
+    this.regionsPlugin = this.wavesurfer[this.params.regionsPluginName];
     this.drawer.createWrapper();
     this.createElements();
     var isInitialised = false; // ws ready event listener
@@ -250,10 +252,9 @@ var MinimapPlugin = /*#__PURE__*/function () {
 
       if (!document.body.contains(_this.params.container)) {
         ws.container.insertBefore(_this.params.container, null);
-      } // how solve this dependency??
+      }
 
-
-      if (_this.wavesurfer.regions && _this.params.showRegions) {
+      if (_this.regionsPlugin && _this.params.showRegions) {
         _this.regions();
       }
 
