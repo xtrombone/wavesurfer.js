@@ -1,5 +1,5 @@
 /*!
- * wavesurfer.js microphone plugin 3.3.3 (2020-05-15)
+ * wavesurfer.js microphone plugin 3.3.3 (2020-06-11)
  * https://github.com/katspaugh/wavesurfer.js
  * @license BSD-3-Clause
  */
@@ -441,7 +441,7 @@ var MicrophonePlugin = /*#__PURE__*/function () {
     /**
      * Audio input device is ready.
      *
-     * @param {LocalMediaStream} stream The microphone's media stream.
+     * @param {MediaStream} stream The microphone's media stream.
      */
 
   }, {

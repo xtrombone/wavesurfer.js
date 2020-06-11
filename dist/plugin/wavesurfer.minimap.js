@@ -1,5 +1,5 @@
 /*!
- * wavesurfer.js minimap plugin 3.3.3 (2020-05-15)
+ * wavesurfer.js minimap plugin 3.3.3 (2020-06-11)
  * https://github.com/katspaugh/wavesurfer.js
  * @license BSD-3-Clause
  */
@@ -333,18 +333,15 @@ var MinimapPlugin = /*#__PURE__*/function () {
       this.regions = {};
       this.wavesurfer.on('region-created', function (region) {
         _this2.regions[region.id] = region;
-
-        _this2.renderRegions();
+        _this2.drawer.wrapper && _this2.renderRegions();
       });
       this.wavesurfer.on('region-updated', function (region) {
         _this2.regions[region.id] = region;
-
-        _this2.renderRegions();
+        _this2.drawer.wrapper && _this2.renderRegions();
       });
       this.wavesurfer.on('region-removed', function (region) {
         delete _this2.regions[region.id];
-
-        _this2.renderRegions();
+        _this2.drawer.wrapper && _this2.renderRegions();
       });
     }
   }, {

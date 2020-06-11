@@ -1,5 +1,5 @@
 /*!
- * wavesurfer.js spectrogram plugin 3.3.3 (2020-05-15)
+ * wavesurfer.js spectrogram plugin 3.3.3 (2020-06-11)
  * https://github.com/katspaugh/wavesurfer.js
  * @license BSD-3-Clause
  */
@@ -488,7 +488,7 @@ var SpectrogramPlugin = /*#__PURE__*/function () {
       this.unAll();
       this.wavesurfer.un('ready', this._onReady);
       this.wavesurfer.un('redraw', this._onRender);
-      this.drawer.wrapper.removeEventListener('scroll', this._onScroll);
+      this.drawer && this.drawer.wrapper.removeEventListener('scroll', this._onScroll);
       this.wavesurfer = null;
       this.util = null;
       this.params = null;

@@ -1,5 +1,5 @@
 /*!
- * wavesurfer.js 3.3.3 (2020-05-15)
+ * wavesurfer.js 3.3.3 (2020-06-11)
  * https://github.com/katspaugh/wavesurfer.js
  * @license BSD-3-Clause
  */
@@ -615,7 +615,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function () { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
@@ -1117,7 +1117,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function () { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
@@ -1489,7 +1489,8 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
             height = _ref2.height,
             offsetY = _ref2.offsetY,
             halfH = _ref2.halfH,
-            peaks = _ref2.peaks;
+            peaks = _ref2.peaks,
+            channelIndex = _ref2.channelIndex;
 
         if (!hasMinVals) {
           var reflectedPeaks = [];
@@ -1507,7 +1508,7 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
 
 
         if (start !== undefined) {
-          _this5.drawLine(peaks, absmax, halfH, offsetY, start, end);
+          _this5.drawLine(peaks, absmax, halfH, offsetY, start, end, channelIndex);
         } // always draw a median line
 
 
@@ -1524,17 +1525,22 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
      * @param {number} offsetY Offset to the top
      * @param {number} start The x-offset of the beginning of the area that
      * should be rendered
-     * @param {number} end The x-offset of the end of the area that
+     * @param {number} end The x-offset of the end of the area that 
      * should be rendered
+     * @param {channelIndex} channelIndex The channel index of the line drawn
      */
 
   }, {
     key: "drawLine",
-    value: function drawLine(peaks, absmax, halfH, offsetY, start, end) {
+    value: function drawLine(peaks, absmax, halfH, offsetY, start, end, channelIndex) {
       var _this6 = this;
 
-      this.canvases.forEach(function (entry) {
-        _this6.setFillStyles(entry);
+      var _ref3 = this.params.splitChannelsOptions.channelColors[channelIndex] || {},
+          waveColor = _ref3.waveColor,
+          progressColor = _ref3.progressColor;
+
+      this.canvases.forEach(function (entry, i) {
+        _this6.setFillStyles(entry, waveColor, progressColor);
 
         entry.drawLines(peaks, absmax, halfH, offsetY, start, end);
       });
@@ -1573,6 +1579,19 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
       }
     }
     /**
+     * Returns whether to hide the channel from being drawn based on params.
+     *
+     * @private
+     * @param {number} channelIndex The index of the current channel.
+     * @returns {bool} True to hide the channel, false to draw.
+     */
+
+  }, {
+    key: "hideChannel",
+    value: function hideChannel(channelIndex) {
+      return this.params.splitChannels && this.params.splitChannelsOptions.filterChannels.includes(channelIndex);
+    }
+    /**
      * Performs preparation tasks and calculations which are shared by `drawBars`
      * and `drawWave`
      *
@@ -1586,12 +1605,13 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
      * @param {number?} end The x-offset of the end of the area that should be
      * rendered
      * @param {function} fn The render function to call, e.g. `drawWave`
+     * @param {number} drawIndex The index of the current channel after filtering.
      * @returns {void}
      */
 
   }, {
     key: "prepareDraw",
-    value: function prepareDraw(peaks, channelIndex, start, end, fn) {
+    value: function prepareDraw(peaks, channelIndex, start, end, fn, drawIndex) {
       var _this7 = this;
 
       return util.frame(function () {
@@ -1600,14 +1620,25 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
           var channels = peaks;
 
           if (_this7.params.splitChannels) {
-            _this7.setHeight(channels.length * _this7.params.height * _this7.params.pixelRatio);
+            var filteredChannels = channels.filter(function (c, i) {
+              return !_this7.hideChannel(i);
+            });
+
+            if (!_this7.params.splitChannelsOptions.overlay) {
+              _this7.setHeight(Math.max(filteredChannels.length, 1) * _this7.params.height * _this7.params.pixelRatio);
+            }
 
             return channels.forEach(function (channelPeaks, i) {
-              return _this7.prepareDraw(channelPeaks, i, start, end, fn);
+              return _this7.prepareDraw(channelPeaks, i, start, end, fn, filteredChannels.indexOf(channelPeaks));
             });
           }
 
           peaks = channels[0];
+        } // Return and do not draw channel peaks if hidden.
+
+
+        if (_this7.hideChannel(channelIndex)) {
+          return;
         } // calculate maximum modulation value, either from the barHeight
         // parameter or if normalize=true from the largest value in the peak
         // set
@@ -1627,7 +1658,7 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
           return val < 0;
         });
         var height = _this7.params.height * _this7.params.pixelRatio;
-        var offsetY = height * channelIndex || 0;
+        var offsetY = height * drawIndex || 0;
         var halfH = height / 2;
         return fn({
           absmax: absmax,
@@ -1635,7 +1666,8 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
           height: height,
           offsetY: offsetY,
           halfH: halfH,
-          peaks: peaks
+          peaks: peaks,
+          channelIndex: channelIndex
         });
       })();
     }
@@ -1644,12 +1676,16 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
      *
      * @private
      * @param {CanvasEntry} entry Target entry
+     * @param {string} waveColor Wave color to draw this entry
+     * @param {string} progressColor Progress color to draw this entry
      */
 
   }, {
     key: "setFillStyles",
     value: function setFillStyles(entry) {
-      entry.setFillStyles(this.params.waveColor, this.params.progressColor);
+      var waveColor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.params.waveColor;
+      var progressColor = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.params.progressColor;
+      entry.setFillStyles(waveColor, progressColor);
     }
     /**
      * Return image data of the multi-canvas
@@ -1738,7 +1774,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function () { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
@@ -1900,7 +1936,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function () { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
@@ -2926,7 +2962,7 @@ function fetchFile(options) {
     instance.response = response;
     var progressAvailable = true;
 
-    if (!response.body) {
+    if (!response.body || document.documentMode || /Edge/.test(navigator.userAgent)) {
       // ReadableStream is not yet supported in this browser
       // see https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream
       progressAvailable = false;
@@ -3305,6 +3341,7 @@ var Observer = /*#__PURE__*/function () {
      * @todo Initialise the handlers here already and remove the conditional
      * assignment in `on()`
      */
+    this._disabledEventEmissions = [];
     this.handlers = null;
   }
   /**
@@ -3411,6 +3448,22 @@ var Observer = /*#__PURE__*/function () {
       return this.on(event, fn);
     }
     /**
+     * Disable firing a list of events by name. When specified, event handlers for any event type
+     * passed in here will not be called.
+     *
+     * @since 4.0.0
+     * @param {string[]} eventNames an array of event names to disable emissions for
+     * @example
+     * // disable seek and interaction events
+     * wavesurfer.setDisabledEventEmissions(['seek', 'interaction']);
+     */
+
+  }, {
+    key: "setDisabledEventEmissions",
+    value: function setDisabledEventEmissions(eventNames) {
+      this._disabledEventEmissions = eventNames;
+    }
+    /**
      * Manually fire an event
      *
      * @param {string} event The event to fire manually
@@ -3424,7 +3477,7 @@ var Observer = /*#__PURE__*/function () {
         args[_key2 - 1] = arguments[_key2];
       }
 
-      if (!this.handlers) {
+      if (!this.handlers || this._disabledEventEmissions.includes(event)) {
         return;
       }
 
@@ -3590,7 +3643,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function () { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
@@ -3942,6 +3995,11 @@ var WaveSurfer = /*#__PURE__*/function (_util$Observer) {
       scrollParent: false,
       skipLength: 2,
       splitChannels: false,
+      splitChannelsOptions: {
+        overlay: false,
+        channelColors: {},
+        filterChannels: []
+      },
       waveColor: '#999',
       xhr: {}
     };
@@ -4887,6 +4945,26 @@ var WaveSurfer = /*#__PURE__*/function (_util$Observer) {
       this.drawBuffer();
     }
     /**
+     * Hide channels from being drawn on the waveform if splitting channels.
+     * 
+     * For example, if we want to draw only the peaks for the right stereo channel:
+     *
+     * const wavesurfer = new WaveSurfer.create({...splitChannels: true});
+     * wavesurfer.load('stereo_audio.mp3');
+     * 
+     * wavesurfer.setFilteredChannel([0]); <-- hide left channel peaks.
+     *
+     * @param {array} channelIndices Channels to be filtered out from drawing.
+     * @version 4.0.0
+     */
+
+  }, {
+    key: "setFilteredChannels",
+    value: function setFilteredChannels(channelIndices) {
+      this.params.splitChannelsOptions.filterChannels = channelIndices;
+      this.drawBuffer();
+    }
+    /**
      * Get the correct peaks for current wave view-port and render wave
      *
      * @private
@@ -5449,7 +5527,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function () { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
