@@ -1445,20 +1445,22 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
         var first = start;
         var last = end;
         var i = first;
-        var halfHmod = 1;
+        var halfHmod = _this4.params.reflection ? 1 : 2;
 
         for (i; i < last; i += step) {
           var peak = peaks[Math.floor(i * scale * peakIndexScale)] || 0;
-          var h = Math.round(peak / absmax * halfH);
+          var h = void 0;
+
+          if (_this4.params.reflection) {
+            h = Math.round(peak / absmax * halfH);
+          } else {
+            h = Math.abs(Math.round(peak / absmax * halfH));
+          }
           /* in case of silences, allow the user to specify that we
            * always draw *something* (normally a 1px high bar) */
 
-          if (h == 0 && _this4.params.barMinHeight) h = _this4.params.barMinHeight;
 
-          if (!_this4.params.reflection) {
-            halfHmod = 2;
-            h = Math.abs(h);
-          }
+          if (h == 0 && _this4.params.barMinHeight) h = _this4.params.barMinHeight;
 
           _this4.fillRect(i + _this4.halfPixel, halfH * halfHmod - h * halfHmod + offsetY, bar + _this4.halfPixel, h * 2 * halfHmod, _this4.barRadius);
         }
@@ -1525,7 +1527,7 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
      * @param {number} offsetY Offset to the top
      * @param {number} start The x-offset of the beginning of the area that
      * should be rendered
-     * @param {number} end The x-offset of the end of the area that 
+     * @param {number} end The x-offset of the end of the area that
      * should be rendered
      * @param {channelIndex} channelIndex The channel index of the line drawn
      */
@@ -1558,6 +1560,7 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
   }, {
     key: "fillRect",
     value: function fillRect(x, y, width, height, radius) {
+      console.log('fillRect', arguments);
       var startCanvas = Math.floor(x / this.maxCanvasWidth);
       var endCanvas = Math.min(Math.ceil((x + width) / this.maxCanvasWidth) + 1, this.canvases.length);
       var i = startCanvas;

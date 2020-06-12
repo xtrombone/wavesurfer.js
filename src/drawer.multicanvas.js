@@ -307,22 +307,25 @@ export default class MultiCanvas extends Drawer {
                 const first = start;
                 const last = end;
                 let i = first;
-                let halfHmod = 1;
+                let halfHmod = this.params.reflection ? 1 : 2;
 
                 for (i; i < last; i += step) {
                     const peak =
                         peaks[Math.floor(i * scale * peakIndexScale)] || 0;
-                    let h = Math.round((peak / absmax) * halfH);
+                    let h;
+
+                    if (this.params.reflection){
+                        h = Math.round((peak / absmax) * halfH);
+
+                    } else {
+                        h = Math.abs(Math.round((peak / absmax) * halfH));
+                    }
 
                     /* in case of silences, allow the user to specify that we
                      * always draw *something* (normally a 1px high bar) */
                     if (h == 0 && this.params.barMinHeight)
                         h = this.params.barMinHeight;
 
-                    if (!this.params.reflection) {
-                      halfHmod = 2;
-                      h = Math.abs(h);
-                    }
 
                     this.fillRect(
                         i + this.halfPixel,
@@ -395,7 +398,7 @@ export default class MultiCanvas extends Drawer {
      * @param {number} offsetY Offset to the top
      * @param {number} start The x-offset of the beginning of the area that
      * should be rendered
-     * @param {number} end The x-offset of the end of the area that 
+     * @param {number} end The x-offset of the end of the area that
      * should be rendered
      * @param {channelIndex} channelIndex The channel index of the line drawn
      */
@@ -417,6 +420,7 @@ export default class MultiCanvas extends Drawer {
      * @param {number} radius Radius of the rectangle
      */
     fillRect(x, y, width, height, radius) {
+        console.log('fillRect',arguments);
         const startCanvas = Math.floor(x / this.maxCanvasWidth);
         const endCanvas = Math.min(
             Math.ceil((x + width) / this.maxCanvasWidth) + 1,
@@ -493,11 +497,11 @@ export default class MultiCanvas extends Drawer {
                                 this.params.height *
                                 this.params.pixelRatio
                         );
-                    } 
+                    }
 
-                    return channels.forEach((channelPeaks, i) => 
+                    return channels.forEach((channelPeaks, i) =>
                         this.prepareDraw(channelPeaks, i, start, end, fn, filteredChannels.indexOf(channelPeaks))
-                    );                    
+                    );
                 }
                 peaks = channels[0];
             }
