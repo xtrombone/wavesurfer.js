@@ -420,7 +420,6 @@ export default class MultiCanvas extends Drawer {
      * @param {number} radius Radius of the rectangle
      */
     fillRect(x, y, width, height, radius) {
-        console.log('fillRect',arguments);
         const startCanvas = Math.floor(x / this.maxCanvasWidth);
         const endCanvas = Math.min(
             Math.ceil((x + width) / this.maxCanvasWidth) + 1,

@@ -1560,7 +1560,6 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
   }, {
     key: "fillRect",
     value: function fillRect(x, y, width, height, radius) {
-      console.log('fillRect', arguments);
       var startCanvas = Math.floor(x / this.maxCanvasWidth);
       var endCanvas = Math.min(Math.ceil((x + width) / this.maxCanvasWidth) + 1, this.canvases.length);
       var i = startCanvas;
