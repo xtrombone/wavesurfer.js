@@ -1,5 +1,5 @@
 /*!
- * wavesurfer.js elan plugin 3.3.3 (2020-06-11)
+ * wavesurfer.js elan plugin 3.3.3 (2020-06-12)
  * https://github.com/katspaugh/wavesurfer.js
  * @license BSD-3-Clause
  */
