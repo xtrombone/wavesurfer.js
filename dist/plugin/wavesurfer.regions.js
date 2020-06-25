@@ -1,5 +1,5 @@
 /*!
- * wavesurfer.js regions plugin 3.3.3 (2020-06-12)
+ * wavesurfer.js regions plugin 4.0.1 (2020-06-25)
  * https://github.com/katspaugh/wavesurfer.js
  * @license BSD-3-Clause
  */
@@ -724,17 +724,18 @@ var Region = /*#__PURE__*/function () {
   }, {
     key: "playLoop",
     value: function playLoop(start) {
-      var _this2 = this;
+      this.loop = true;
+      this.play(start);
+    }
+    /**
+     * Set looping on/off.
+     * @param {boolean} loop True if should play in loop
+     */
 
-      var s = start || this.start;
-      this.wavesurfer.play(s);
-      this.once('out', function () {
-        var realTime = _this2.wavesurfer.getCurrentTime();
-
-        if (realTime >= _this2.start && realTime <= _this2.end) {
-          return _this2.playLoop();
-        }
-      });
+  }, {
+    key: "setLoop",
+    value: function setLoop(loop) {
+      this.loop = loop;
     }
     /* Render a region as a DOM element. */
 
@@ -865,44 +866,48 @@ var Region = /*#__PURE__*/function () {
   }, {
     key: "bindInOut",
     value: function bindInOut() {
-      var _this3 = this;
+      var _this2 = this;
 
       this.firedIn = false;
       this.firedOut = false;
 
       var onProcess = function onProcess(time) {
-        var start = Math.round(_this3.start * 10) / 10;
-        var end = Math.round(_this3.end * 10) / 10;
+        var start = Math.round(_this2.start * 10) / 10;
+        var end = Math.round(_this2.end * 10) / 10;
         time = Math.round(time * 10) / 10;
 
-        if (!_this3.firedOut && _this3.firedIn && (start > time || end <= time)) {
-          _this3.firedOut = true;
-          _this3.firedIn = false;
+        if (!_this2.firedOut && _this2.firedIn && (start > time || end <= time)) {
+          _this2.firedOut = true;
+          _this2.firedIn = false;
 
-          _this3.fireEvent('out');
+          _this2.fireEvent('out');
 
-          _this3.wavesurfer.fireEvent('region-out', _this3);
+          _this2.wavesurfer.fireEvent('region-out', _this2);
         }
 
-        if (!_this3.firedIn && start <= time && end > time) {
-          _this3.firedIn = true;
-          _this3.firedOut = false;
+        if (!_this2.firedIn && start <= time && end > time) {
+          _this2.firedIn = true;
+          _this2.firedOut = false;
 
-          _this3.fireEvent('in');
+          _this2.fireEvent('in');
 
-          _this3.wavesurfer.fireEvent('region-in', _this3);
+          _this2.wavesurfer.fireEvent('region-in', _this2);
         }
       };
 
       this.wavesurfer.backend.on('audioprocess', onProcess);
       this.on('remove', function () {
-        _this3.wavesurfer.backend.un('audioprocess', onProcess);
+        _this2.wavesurfer.backend.un('audioprocess', onProcess);
       });
       /* Loop playback. */
 
       this.on('out', function () {
-        if (_this3.loop) {
-          _this3.wavesurfer.play(_this3.start);
+        if (_this2.loop) {
+          var realTime = _this2.wavesurfer.getCurrentTime();
+
+          if (realTime >= _this2.start && realTime <= _this2.end) {
+            _this2.wavesurfer.play(_this2.start);
+          }
         }
       });
     }
@@ -911,43 +916,43 @@ var Region = /*#__PURE__*/function () {
   }, {
     key: "bindEvents",
     value: function bindEvents() {
-      var _this4 = this;
+      var _this3 = this;
 
       var preventContextMenu = this.preventContextMenu;
       this.element.addEventListener('mouseenter', function (e) {
-        _this4.fireEvent('mouseenter', e);
+        _this3.fireEvent('mouseenter', e);
 
-        _this4.wavesurfer.fireEvent('region-mouseenter', _this4, e);
+        _this3.wavesurfer.fireEvent('region-mouseenter', _this3, e);
       });
       this.element.addEventListener('mouseleave', function (e) {
-        _this4.fireEvent('mouseleave', e);
+        _this3.fireEvent('mouseleave', e);
 
-        _this4.wavesurfer.fireEvent('region-mouseleave', _this4, e);
+        _this3.wavesurfer.fireEvent('region-mouseleave', _this3, e);
       });
       this.element.addEventListener('click', function (e) {
         e.stopPropagation();
         e.preventDefault();
 
-        _this4.fireEvent('click', e);
+        _this3.fireEvent('click', e);
 
-        _this4.wavesurfer.fireEvent('region-click', _this4, e);
+        _this3.wavesurfer.fireEvent('region-click', _this3, e);
       });
       this.element.addEventListener('dblclick', function (e) {
         e.stopPropagation();
         e.preventDefault();
 
-        _this4.fireEvent('dblclick', e);
+        _this3.fireEvent('dblclick', e);
 
-        _this4.wavesurfer.fireEvent('region-dblclick', _this4, e);
+        _this3.wavesurfer.fireEvent('region-dblclick', _this3, e);
       });
       this.element.addEventListener('contextmenu', function (e) {
         if (preventContextMenu) {
           e.preventDefault();
         }
 
-        _this4.fireEvent('contextmenu', e);
+        _this3.fireEvent('contextmenu', e);
 
-        _this4.wavesurfer.fireEvent('region-contextmenu', _this4, e);
+        _this3.wavesurfer.fireEvent('region-contextmenu', _this3, e);
       });
       /* Drag or resize on mousemove. */
 
@@ -958,7 +963,7 @@ var Region = /*#__PURE__*/function () {
   }, {
     key: "bindDragEvents",
     value: function bindDragEvents() {
-      var _this5 = this;
+      var _this4 = this;
 
       var container = this.wavesurfer.drawer.container;
       var scrollSpeed = this.scrollSpeed;
@@ -973,22 +978,22 @@ var Region = /*#__PURE__*/function () {
       var wrapperRect; // Scroll when the user is dragging within the threshold
 
       var edgeScroll = function edgeScroll(e) {
-        var duration = _this5.wavesurfer.getDuration();
+        var duration = _this4.wavesurfer.getDuration();
 
         if (!scrollDirection || !drag && !resize) {
           return;
         } // Update scroll position
 
 
-        var scrollLeft = _this5.wrapper.scrollLeft + scrollSpeed * scrollDirection;
-        _this5.wrapper.scrollLeft = scrollLeft = Math.min(maxScroll, Math.max(0, scrollLeft)); // Get the currently selected time according to the mouse position
+        var scrollLeft = _this4.wrapper.scrollLeft + scrollSpeed * scrollDirection;
+        _this4.wrapper.scrollLeft = scrollLeft = Math.min(maxScroll, Math.max(0, scrollLeft)); // Get the currently selected time according to the mouse position
 
-        var time = _this5.regionsUtil.getRegionSnapToGridValue(_this5.wavesurfer.drawer.handleEvent(e) * duration);
+        var time = _this4.regionsUtil.getRegionSnapToGridValue(_this4.wavesurfer.drawer.handleEvent(e) * duration);
 
         var delta = time - startTime;
         startTime = time; // Continue dragging or resizing
 
-        drag ? _this5.onDrag(delta) : _this5.onResize(delta, resize); // Repeat
+        drag ? _this4.onDrag(delta) : _this4.onResize(delta, resize); // Repeat
 
         window.requestAnimationFrame(function () {
           edgeScroll(e);
@@ -996,7 +1001,7 @@ var Region = /*#__PURE__*/function () {
       };
 
       var onDown = function onDown(e) {
-        var duration = _this5.wavesurfer.getDuration();
+        var duration = _this4.wavesurfer.getDuration();
 
         if (e.touches && e.touches.length > 1) {
           return;
@@ -1005,23 +1010,23 @@ var Region = /*#__PURE__*/function () {
         touchId = e.targetTouches ? e.targetTouches[0].identifier : null; // stop the event propagation, if this region is resizable or draggable
         // and the event is therefore handled here.
 
-        if (_this5.drag || _this5.resize) {
+        if (_this4.drag || _this4.resize) {
           e.stopPropagation();
         } // Store the selected startTime we begun dragging or resizing
 
 
-        startTime = _this5.regionsUtil.getRegionSnapToGridValue(_this5.wavesurfer.drawer.handleEvent(e, true) * duration); // Store for scroll calculations
+        startTime = _this4.regionsUtil.getRegionSnapToGridValue(_this4.wavesurfer.drawer.handleEvent(e, true) * duration); // Store for scroll calculations
 
-        maxScroll = _this5.wrapper.scrollWidth - _this5.wrapper.clientWidth;
-        wrapperRect = _this5.wrapper.getBoundingClientRect();
-        _this5.isResizing = false;
-        _this5.isDragging = false;
+        maxScroll = _this4.wrapper.scrollWidth - _this4.wrapper.clientWidth;
+        wrapperRect = _this4.wrapper.getBoundingClientRect();
+        _this4.isResizing = false;
+        _this4.isDragging = false;
 
         if (e.target.tagName.toLowerCase() === 'handle') {
-          _this5.isResizing = true;
+          _this4.isResizing = true;
           resize = e.target.classList.contains('wavesurfer-handle-start') ? 'start' : 'end';
         } else {
-          _this5.isDragging = true;
+          _this4.isDragging = true;
           drag = true;
           resize = false;
         }
@@ -1033,8 +1038,8 @@ var Region = /*#__PURE__*/function () {
         }
 
         if (drag || resize) {
-          _this5.isDragging = false;
-          _this5.isResizing = false;
+          _this4.isDragging = false;
+          _this4.isResizing = false;
           drag = false;
           scrollDirection = null;
           resize = false;
@@ -1043,16 +1048,16 @@ var Region = /*#__PURE__*/function () {
         if (updated) {
           updated = false;
 
-          _this5.util.preventClick();
+          _this4.util.preventClick();
 
-          _this5.fireEvent('update-end', e);
+          _this4.fireEvent('update-end', e);
 
-          _this5.wavesurfer.fireEvent('region-update-end', _this5, e);
+          _this4.wavesurfer.fireEvent('region-update-end', _this4, e);
         }
       };
 
       var onMove = function onMove(e) {
-        var duration = _this5.wavesurfer.getDuration();
+        var duration = _this4.wavesurfer.getDuration();
 
         if (e.touches && e.touches.length > 1) {
           return;
@@ -1068,29 +1073,29 @@ var Region = /*#__PURE__*/function () {
 
         var oldTime = startTime;
 
-        var time = _this5.regionsUtil.getRegionSnapToGridValue(_this5.wavesurfer.drawer.handleEvent(e) * duration);
+        var time = _this4.regionsUtil.getRegionSnapToGridValue(_this4.wavesurfer.drawer.handleEvent(e) * duration);
 
         var delta = time - startTime;
         startTime = time; // Drag
 
-        if (_this5.drag && drag) {
+        if (_this4.drag && drag) {
           updated = updated || !!delta;
 
-          _this5.onDrag(delta);
+          _this4.onDrag(delta);
         } // Resize
 
 
-        if (_this5.resize && resize) {
+        if (_this4.resize && resize) {
           updated = updated || !!delta;
 
-          _this5.onResize(delta, resize);
+          _this4.onResize(delta, resize);
         }
 
-        if (_this5.scroll && container.clientWidth < _this5.wrapper.scrollWidth) {
+        if (_this4.scroll && container.clientWidth < _this4.wrapper.scrollWidth) {
           if (drag) {
             // The threshold is not between the mouse and the container edge
             // but is between the region and the container edge
-            var regionRect = _this5.element.getBoundingClientRect();
+            var regionRect = _this4.element.getBoundingClientRect();
 
             var x = regionRect.left - wrapperRect.left; // Check direction
 
@@ -1134,9 +1139,9 @@ var Region = /*#__PURE__*/function () {
         document.body.removeEventListener('mouseup', onUp);
         document.body.removeEventListener('touchend', onUp);
 
-        _this5.wrapper.removeEventListener('mousemove', onMove);
+        _this4.wrapper.removeEventListener('mousemove', onMove);
 
-        _this5.wrapper.removeEventListener('touchmove', onMove);
+        _this4.wrapper.removeEventListener('touchmove', onMove);
       });
       this.wavesurfer.on('destroy', function () {
         document.body.removeEventListener('mouseup', onUp);

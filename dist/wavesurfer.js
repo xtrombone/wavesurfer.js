@@ -1,5 +1,5 @@
 /*!
- * wavesurfer.js 3.3.3 (2020-06-12)
+ * wavesurfer.js 4.0.1 (2020-06-25)
  * https://github.com/katspaugh/wavesurfer.js
  * @license BSD-3-Clause
  */
@@ -253,7 +253,6 @@ var CanvasEntry = /*#__PURE__*/function () {
      * Start of the area the canvas should render, between 0 and 1
      *
      * @type {number}
-     * @private
      */
 
     this.start = 0;
@@ -261,7 +260,6 @@ var CanvasEntry = /*#__PURE__*/function () {
      * End of the area the canvas should render, between 0 and 1
      *
      * @type {number}
-     * @private
      */
 
     this.end = 1;
@@ -389,7 +387,6 @@ var CanvasEntry = /*#__PURE__*/function () {
     /**
      * Draw the actual rectangle on a `canvas` element
      *
-     * @private
      * @param {CanvasRenderingContext2D} ctx Rendering context of target canvas
      * @param {number} x X start position
      * @param {number} y Y start position
@@ -414,7 +411,6 @@ var CanvasEntry = /*#__PURE__*/function () {
     /**
      * Draw a rounded rectangle on Canvas
      *
-     * @private
      * @param {CanvasRenderingContext2D} ctx Canvas context
      * @param {number} x X-position of the rectangle
      * @param {number} y Y-position of the rectangle
@@ -478,7 +474,6 @@ var CanvasEntry = /*#__PURE__*/function () {
     /**
      * Render the actual waveform line on a `canvas` element
      *
-     * @private
      * @param {CanvasRenderingContext2D} ctx Rendering context of target canvas
      * @param {number[]} peaks Array with peaks data
      * @param {number} absmax Maximum peak value (absolute)
@@ -645,12 +640,9 @@ var Drawer = /*#__PURE__*/function (_util$Observer) {
     _classCallCheck(this, Drawer);
 
     _this = _super.call(this);
-    /** @private */
-
     _this.container = container;
     /**
      * @type {WavesurferParams}
-     * @private
      */
 
     _this.params = params;
@@ -666,8 +658,6 @@ var Drawer = /*#__PURE__*/function (_util$Observer) {
      */
 
     _this.height = params.height * _this.params.pixelRatio;
-    /** @private */
-
     _this.lastPos = 0;
     /**
      * The `<wave>` element which is added to the container
@@ -748,10 +738,6 @@ var Drawer = /*#__PURE__*/function (_util$Observer) {
 
       return progress;
     }
-    /**
-     * @private
-     */
-
   }, {
     key: "setupWrapperEvents",
     value: function setupWrapperEvents() {
@@ -1151,12 +1137,10 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
     _this = _super.call(this, container, params);
     /**
      * @type {number}
-     * @private
      */
 
     _this.maxCanvasWidth = params.maxCanvasWidth;
     /**
-     * @private
      * @type {number}
      */
 
@@ -1170,7 +1154,6 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
 
     _this.hasProgressCanvas = params.waveColor != params.progressColor;
     /**
-     * @private
      * @type {number}
      */
 
@@ -1178,13 +1161,11 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
     /**
      * List of `CanvasEntry` instances.
      *
-     * @private
      * @type {Array}
      */
 
     _this.canvases = [];
     /**
-     * @private
      * @type {HTMLElement}
      */
 
@@ -1192,7 +1173,6 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
     /**
      * Class used to generate entries.
      *
-     * @private
      * @type {function}
      */
 
@@ -1200,7 +1180,6 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
     /**
      * Canvas 2d context attributes.
      *
-     * @private
      * @type {object}
      */
 
@@ -1216,7 +1195,6 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
     /**
      * The radius of the wave bars. Makes bars rounded
      *
-     * @private
      * @type {number}
      */
 
@@ -1237,7 +1215,6 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
     /**
      * Create the canvas elements and style them
      *
-     * @private
      */
 
   }, {
@@ -1307,7 +1284,6 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
     /**
      * Add a canvas to the canvas list
      *
-     * @private
      */
 
   }, {
@@ -1344,7 +1320,6 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
     /**
      * Pop single canvas from the list
      *
-     * @private
      */
 
   }, {
@@ -1369,7 +1344,6 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
     /**
      * Update the dimensions of a canvas element
      *
-     * @private
      * @param {CanvasEntry} entry Target entry
      * @param {number} width The new width of the element
      * @param {number} height The new height of the element
@@ -1520,7 +1494,6 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
     /**
      * Tell the canvas entries to render their portion of the waveform
      *
-     * @private
      * @param {number[]} peaks Peaks data
      * @param {number} absmax Maximum peak value (absolute)
      * @param {number} halfH Half the height of the waveform
@@ -1583,7 +1556,6 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
     /**
      * Returns whether to hide the channel from being drawn based on params.
      *
-     * @private
      * @param {number} channelIndex The index of the current channel.
      * @returns {bool} True to hide the channel, false to draw.
      */
@@ -1597,7 +1569,6 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
      * Performs preparation tasks and calculations which are shared by `drawBars`
      * and `drawWave`
      *
-     * @private
      * @param {number[]|Number.<Array[]>} peaks Can also be an array of arrays for
      * split channel rendering
      * @param {number} channelIndex The index of the current channel. Normally
@@ -1676,7 +1647,6 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
     /**
      * Set the fill styles for a certain entry (wave and progress)
      *
-     * @private
      * @param {CanvasEntry} entry Target entry
      * @param {string} waveColor Wave color to draw this entry
      * @param {string} progressColor Progress color to draw this entry
@@ -1787,12 +1757,11 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 /**
- * MediaElementWebAudio backend: allows to load audio as HTML5 audio tag and use it with WebAudio API.
- * Setting the MediaElementWebAudio backend, there is the possibility to load audio of big dimensions, using the WebAudio API features.
- * The audio to load is an HTML5 audio tag, so you have to use the same methods of MediaElement backend for loading and playback.
- * In this way, the audio resource is not loaded entirely from server, but in ranges, since you load an HTML5 audio tag.
- * In this way, filters and other functionalities can be performed like with WebAudio backend, but without decoding
- * internally audio data, that caused crashing of the browser. You have to give also peaks, so the audio data are not decoded.
+ * MediaElementWebAudio backend: load audio via an HTML5 audio tag, but playback with the WebAudio API.
+ * The advantage here is that the html5 <audio> tag can perform range requests on the server and not
+ * buffer the entire file in one request, and you still get the filtering and scripting functionality
+ * of the webaudio API.
+ * Note that in order to use range requests and prevent buffering, you must provide peak data.
  *
  * @since 3.2.0
  */
@@ -1862,6 +1831,12 @@ var MediaElementWebAudio = /*#__PURE__*/function (_MediaElement) {
     value: function createMediaElementSource(mediaElement) {
       this.sourceMediaElement = this.ac.createMediaElementSource(mediaElement);
       this.sourceMediaElement.connect(this.analyser);
+    }
+  }, {
+    key: "play",
+    value: function play(start, end) {
+      this.resumeAudioContext();
+      return _get(_getPrototypeOf(MediaElementWebAudio.prototype), "play", this).call(this, start, end);
     }
     /**
      * Set the audio volume
@@ -2178,7 +2153,7 @@ var MediaElement = /*#__PURE__*/function (_WebAudio) {
         // Resets the media element and restarts the media resource. Any
         // pending events are discarded. How much media data is fetched is
         // still affected by the preload attribute.
-        console.log('MEDIA LOAD', media);
+        // console.log('MEDIA LOAD', media);
         media.load();
       }
 
@@ -2423,6 +2398,20 @@ var MediaElement = /*#__PURE__*/function (_WebAudio) {
       if (this.media.volume !== this.volume) {
         this.media.volume = this.volume;
       }
+    }
+    /**
+     * Enable or disable muted audio
+     *
+     * @since 4.0.0
+     * @param {boolean} muted Specify `true` to mute audio.
+     */
+
+  }, {
+    key: "setMute",
+    value: function setMute(muted) {
+      // This causes a volume change to be emitted too through the
+      // volumechange event listener.
+      this.isMuted = this.media.muted = muted;
     }
     /**
      * This is called when wavesurfer is destroyed
@@ -3466,6 +3455,16 @@ var Observer = /*#__PURE__*/function () {
       this._disabledEventEmissions = eventNames;
     }
     /**
+     * plugins borrow part of this class without calling the constructor,
+     * so we have to be careful about _disabledEventEmissions
+     */
+
+  }, {
+    key: "_isDisabledEventEmission",
+    value: function _isDisabledEventEmission(event) {
+      return this._disabledEventEmissions && this._disabledEventEmissions.includes(event);
+    }
+    /**
      * Manually fire an event
      *
      * @param {string} event The event to fire manually
@@ -3479,7 +3478,7 @@ var Observer = /*#__PURE__*/function () {
         args[_key2 - 1] = arguments[_key2];
       }
 
-      if (!this.handlers || this._disabledEventEmissions.includes(event)) {
+      if (!this.handlers || this._isDisabledEventEmission(event)) {
         return;
       }
 
@@ -4756,19 +4755,26 @@ var WaveSurfer = /*#__PURE__*/function (_util$Observer) {
         return;
       }
 
-      if (mute) {
-        // If currently not muted then save current volume,
-        // turn off the volume and update the mute properties
-        this.savedVolume = this.backend.getVolume();
-        this.backend.setVolume(0);
-        this.isMuted = true;
-        this.fireEvent('volume', 0);
+      if (this.backend.setMute) {
+        // Backends such as the MediaElement backend have their own handling
+        // of mute, let them handle it.
+        this.backend.setMute(mute);
+        this.isMuted = mute;
       } else {
-        // If currently muted then restore to the saved volume
-        // and update the mute properties
-        this.backend.setVolume(this.savedVolume);
-        this.isMuted = false;
-        this.fireEvent('volume', this.savedVolume);
+        if (mute) {
+          // If currently not muted then save current volume,
+          // turn off the volume and update the mute properties
+          this.savedVolume = this.backend.getVolume();
+          this.backend.setVolume(0);
+          this.isMuted = true;
+          this.fireEvent('volume', 0);
+        } else {
+          // If currently muted then restore to the saved volume
+          // and update the mute properties
+          this.backend.setVolume(this.savedVolume);
+          this.isMuted = false;
+          this.fireEvent('volume', this.savedVolume);
+        }
       }
 
       this.fireEvent('mute', this.isMuted);
@@ -4948,12 +4954,12 @@ var WaveSurfer = /*#__PURE__*/function (_util$Observer) {
     }
     /**
      * Hide channels from being drawn on the waveform if splitting channels.
-     * 
+     *
      * For example, if we want to draw only the peaks for the right stereo channel:
      *
      * const wavesurfer = new WaveSurfer.create({...splitChannels: true});
      * wavesurfer.load('stereo_audio.mp3');
-     * 
+     *
      * wavesurfer.setFilteredChannel([0]); <-- hide left channel peaks.
      *
      * @param {array} channelIndices Channels to be filtered out from drawing.
@@ -5488,7 +5494,7 @@ var WaveSurfer = /*#__PURE__*/function (_util$Observer) {
 }(util.Observer);
 
 exports.default = WaveSurfer;
-WaveSurfer.VERSION = "3.3.3";
+WaveSurfer.VERSION = "4.0.1";
 WaveSurfer.util = util;
 module.exports = exports.default;
 
@@ -6188,6 +6194,19 @@ var WebAudio = /*#__PURE__*/function (_util$Observer) {
       this.source.connect(this.analyser);
     }
     /**
+     * @private
+     *
+     * some browsers require an explicit call to #resume before they will play back audio
+     */
+
+  }, {
+    key: "resumeAudioContext",
+    value: function resumeAudioContext() {
+      if (this.ac.state == 'suspended') {
+        this.ac.resume && this.ac.resume();
+      }
+    }
+    /**
      * Used by `wavesurfer.isPlaying()` and `wavesurfer.playPause()`
      *
      * @return {boolean} Whether or not this backend is currently paused
@@ -6292,11 +6311,7 @@ var WebAudio = /*#__PURE__*/function (_util$Observer) {
       end = adjustedTime.end;
       this.scheduledPause = end;
       this.source.start(0, start);
-
-      if (this.ac.state == 'suspended') {
-        this.ac.resume && this.ac.resume();
-      }
-
+      this.resumeAudioContext();
       this.setState(PLAYING);
       this.fireEvent('play');
     }

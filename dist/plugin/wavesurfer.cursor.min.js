@@ -1,5 +1,5 @@
 /*!
- * wavesurfer.js cursor plugin 3.3.3 (2020-06-12)
+ * wavesurfer.js cursor plugin 4.0.1 (2020-06-25)
  * https://github.com/katspaugh/wavesurfer.js
  * @license BSD-3-Clause
  */
