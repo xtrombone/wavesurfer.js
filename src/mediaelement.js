@@ -398,6 +398,18 @@ export default class MediaElement extends WebAudio {
     }
 
     /**
+     * Enable or disable muted audio
+     *
+     * @since 4.0.0
+     * @param {boolean} muted Specify `true` to mute audio.
+     */
+    setMute(muted) {
+        // This causes a volume change to be emitted too through the
+        // volumechange event listener.
+        this.isMuted = this.media.muted = muted;
+    }
+
+    /**
      * This is called when wavesurfer is destroyed
      *
      */
