@@ -189,7 +189,7 @@ export default class MediaElement extends WebAudio {
             // Resets the media element and restarts the media resource. Any
             // pending events are discarded. How much media data is fetched is
             // still affected by the preload attribute.
-            console.log('MEDIA LOAD', media);
+            // console.log('MEDIA LOAD', media);
             media.load();
         }
 
