@@ -148,7 +148,7 @@ export default class MediaElement extends WebAudio {
         }
         container.appendChild(media);
 
-        this._load(media, peaks);
+        this._load(media, peaks, preload);
     }
 
     /**
@@ -161,7 +161,7 @@ export default class MediaElement extends WebAudio {
         elt.controls = this.params.mediaControls;
         elt.autoplay = this.params.autoplay || false;
 
-        this._load(elt, peaks);
+        this._load(elt, peaks, elt.preload);
     }
 
     /**
@@ -170,11 +170,12 @@ export default class MediaElement extends WebAudio {
      *
      * @param {HTMLMediaElement} media HTML5 Audio or Video element
      * @param {number[]|Number.<Array[]>} peaks Array of peak data
+     * @param {string} preload HTML 5 preload attribute value
      * @throws Will throw an error if the `media` argument is not a valid media
      * element.
      * @private
      */
-    _load(media, peaks) {
+    _load(media, peaks, preload) {
         // verify media element is valid
         if (
             !(media instanceof HTMLMediaElement) ||
@@ -185,7 +186,10 @@ export default class MediaElement extends WebAudio {
 
         // load must be called manually on iOS, otherwise peaks won't draw
         // until a user interaction triggers load --> 'ready' event
-        if (typeof media.load == 'function') {
+        //
+        // note that we avoid calling media.load here when given peaks and preload == 'none'
+        // as this almost always triggers some browser fetch of the media.
+        if (typeof media.load == 'function' && !(peaks && preload == 'none')) {
             // Resets the media element and restarts the media resource. Any
             // pending events are discarded. How much media data is fetched is
             // still affected by the preload attribute.
