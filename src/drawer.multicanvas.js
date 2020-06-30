@@ -158,7 +158,7 @@ export default class MultiCanvas extends Drawer {
         });
 
         this.style(this.progressWave, { width: totalWidth + "px" });
-        this.style(this.progressWave, { "clip-path": this.makeInset(totalWidth)});
+        this.style(this.progressWave, { "clip-path": this.makeInset(totalWidth), "-webkit-clip-path": this.makeInset(totalWidth)});
     }
 
     /**
@@ -588,6 +588,6 @@ export default class MultiCanvas extends Drawer {
     updateProgress(position) {
         let actualWidth = this.width / this.params.pixelRatio;
 
-        this.style(this.progressWave, { 'clip-path': this.makeInset(actualWidth - position)});
+        this.style(this.progressWave, { 'clip-path': this.makeInset(actualWidth - position), '-webkit-clip-path': this.makeInset(actualWidth - position)});
     }
 }

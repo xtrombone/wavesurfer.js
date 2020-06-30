@@ -1284,7 +1284,8 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
         width: totalWidth + "px"
       });
       this.style(this.progressWave, {
-        "clip-path": this.makeInset(totalWidth)
+        "clip-path": this.makeInset(totalWidth),
+        "-webkit-clip-path": this.makeInset(totalWidth)
       });
     }
     /**
@@ -1720,7 +1721,8 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
     value: function updateProgress(position) {
       var actualWidth = this.width / this.params.pixelRatio;
       this.style(this.progressWave, {
-        'clip-path': this.makeInset(actualWidth - position)
+        'clip-path': this.makeInset(actualWidth - position),
+        '-webkit-clip-path': this.makeInset(actualWidth - position)
       });
     }
   }]);
