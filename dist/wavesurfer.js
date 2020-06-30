@@ -1,5 +1,5 @@
 /*!
- * wavesurfer.js 4.0.1 (2020-06-25)
+ * wavesurfer.js 4.0.1 (2020-06-30)
  * https://github.com/katspaugh/wavesurfer.js
  * @license BSD-3-Clause
  */
@@ -1280,6 +1280,12 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
 
         entry.clearWave();
       });
+      this.style(this.progressWave, {
+        width: totalWidth + "px"
+      });
+      this.style(this.progressWave, {
+        "clip-path": this.makeInset(totalWidth)
+      });
     }
     /**
      * Add a canvas to the canvas list
@@ -1689,6 +1695,21 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
       }
     }
     /**
+     * build a css inset string for masking off portions of the progessWave
+     *
+     * In order to avoid browser layout passes, we leave our progress wave at full width
+     * but mask a portion of it off using the `clip-path` CSS property.
+     *
+     * @param {number} rightInset=number of pixels to clip off the right
+     * @return {string} css
+     */
+
+  }, {
+    key: "makeInset",
+    value: function makeInset(rightInset) {
+      return "inset(0px ".concat(rightInset, "px 0px 0px)");
+    }
+    /**
      * Render the new progress
      *
      * @param {number} position X-offset of progress position in pixels
@@ -1697,8 +1718,9 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
   }, {
     key: "updateProgress",
     value: function updateProgress(position) {
+      var actualWidth = this.width / this.params.pixelRatio;
       this.style(this.progressWave, {
-        width: position + 'px'
+        'clip-path': this.makeInset(actualWidth - position)
       });
     }
   }]);
@@ -1809,13 +1831,14 @@ var MediaElementWebAudio = /*#__PURE__*/function (_MediaElement) {
      *
      * @param {HTMLMediaElement} media HTML5 Audio or Video element
      * @param {number[]|Number.<Array[]>} peaks Array of peak data
+     * @param {string} preload HTML 5 preload attribute value
      * @private
      */
 
   }, {
     key: "_load",
-    value: function _load(media, peaks) {
-      _get(_getPrototypeOf(MediaElementWebAudio.prototype), "_load", this).call(this, media, peaks);
+    value: function _load(media, peaks, preload) {
+      _get(_getPrototypeOf(MediaElementWebAudio.prototype), "_load", this).call(this, media, peaks, preload);
 
       this.createMediaElementSource(media);
     }
@@ -2111,7 +2134,7 @@ var MediaElement = /*#__PURE__*/function (_WebAudio) {
 
       container.appendChild(media);
 
-      this._load(media, peaks);
+      this._load(media, peaks, preload);
     }
     /**
      * Load existing media element.
@@ -2126,7 +2149,7 @@ var MediaElement = /*#__PURE__*/function (_WebAudio) {
       elt.controls = this.params.mediaControls;
       elt.autoplay = this.params.autoplay || false;
 
-      this._load(elt, peaks);
+      this._load(elt, peaks, elt.preload);
     }
     /**
      * Method called by both `load` (from url)
@@ -2134,6 +2157,7 @@ var MediaElement = /*#__PURE__*/function (_WebAudio) {
      *
      * @param {HTMLMediaElement} media HTML5 Audio or Video element
      * @param {number[]|Number.<Array[]>} peaks Array of peak data
+     * @param {string} preload HTML 5 preload attribute value
      * @throws Will throw an error if the `media` argument is not a valid media
      * element.
      * @private
@@ -2141,15 +2165,18 @@ var MediaElement = /*#__PURE__*/function (_WebAudio) {
 
   }, {
     key: "_load",
-    value: function _load(media, peaks) {
+    value: function _load(media, peaks, preload) {
       // verify media element is valid
       if (!(media instanceof HTMLMediaElement) || typeof media.addEventListener === 'undefined') {
         throw new Error('media parameter is not a valid media element');
       } // load must be called manually on iOS, otherwise peaks won't draw
       // until a user interaction triggers load --> 'ready' event
+      //
+      // note that we avoid calling media.load here when given peaks and preload == 'none'
+      // as this almost always triggers some browser fetch of the media.
 
 
-      if (typeof media.load == 'function') {
+      if (typeof media.load == 'function' && !(peaks && preload == 'none')) {
         // Resets the media element and restarts the media resource. Any
         // pending events are discarded. How much media data is fetched is
         // still affected by the preload attribute.
