@@ -12,7 +12,7 @@ const FINISHED = 'finished';
  */
 export default class WebAudio extends util.Observer {
     /** scriptBufferSize: size of the processing buffer */
-    static scriptBufferSize = 256;
+    static scriptBufferSize = 4096;
     /** audioContext: allows to process audio with WebAudio API */
     audioContext = null;
     /** @private */
@@ -429,7 +429,9 @@ export default class WebAudio extends util.Observer {
          * webaudio context 4096 samples seemed to be the best fit for rendering
          * will review this code once a stable version of Safari TP is out
          */
+
         if (!this.buffer.length) {
+            // this.sampleRate doesn't appear to be set, but also not used if peaks provided
             const newBuffer = this.createBuffer(1, 4096, this.sampleRate);
             this.buffer = newBuffer.buffer;
         }

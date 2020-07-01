@@ -6070,6 +6070,7 @@ var WebAudio = /*#__PURE__*/function (_util$Observer) {
 
 
       if (!this.buffer.length) {
+        // this.sampleRate doesn't appear to be set, but also not used if peaks provided
         var newBuffer = this.createBuffer(1, 4096, this.sampleRate);
         this.buffer = newBuffer.buffer;
       }
@@ -6417,7 +6418,7 @@ var WebAudio = /*#__PURE__*/function (_util$Observer) {
 }(util.Observer);
 
 exports.default = WebAudio;
-WebAudio.scriptBufferSize = 256;
+WebAudio.scriptBufferSize = 4096;
 module.exports = exports.default;
 
 /***/ })
