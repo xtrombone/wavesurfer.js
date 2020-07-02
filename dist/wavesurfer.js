@@ -1,5 +1,5 @@
 /*!
- * wavesurfer.js 4.0.1 (2020-07-01)
+ * wavesurfer.js 4.0.1 (2020-07-02)
  * https://github.com/katspaugh/wavesurfer.js
  * @license BSD-3-Clause
  */
@@ -6418,7 +6418,7 @@ var WebAudio = /*#__PURE__*/function (_util$Observer) {
 }(util.Observer);
 
 exports.default = WebAudio;
-WebAudio.scriptBufferSize = 16384;
+WebAudio.scriptBufferSize = 256;
 module.exports = exports.default;
 
 /***/ })
