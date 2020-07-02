@@ -1,5 +1,5 @@
 /*!
- * wavesurfer.js spectrogram plugin 4.0.1 (2020-06-30)
+ * wavesurfer.js spectrogram plugin 4.0.1 (2020-07-01)
  * https://github.com/katspaugh/wavesurfer.js
  * @license BSD-3-Clause
  */
