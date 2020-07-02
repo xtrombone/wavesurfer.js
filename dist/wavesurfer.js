@@ -6418,7 +6418,7 @@ var WebAudio = /*#__PURE__*/function (_util$Observer) {
 }(util.Observer);
 
 exports.default = WebAudio;
-WebAudio.scriptBufferSize = 0;
+WebAudio.scriptBufferSize = 16384;
 module.exports = exports.default;
 
 /***/ })

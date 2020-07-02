@@ -12,7 +12,7 @@ const FINISHED = 'finished';
  */
 export default class WebAudio extends util.Observer {
     /** scriptBufferSize: size of the processing buffer */
-    static scriptBufferSize = 0;
+    static scriptBufferSize = 16384;
     /** audioContext: allows to process audio with WebAudio API */
     audioContext = null;
     /** @private */
