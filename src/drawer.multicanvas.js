@@ -82,7 +82,13 @@ export default class MultiCanvas extends Drawer {
          * @type {number}
          */
         this.barRadius = params.barRadius || 0;
-        this.isIE = /*@cc_on!@*/ false || !!document.documentMode;
+
+        /**
+         * Conditional for clip-path-based progress
+         *
+         * @type {boolean}
+         */
+        this.isIE = !!document.documentMode;
     }
 
     /**
@@ -625,10 +631,7 @@ export default class MultiCanvas extends Drawer {
      * @param {number} position X-offset of progress position in pixels
      */
     updateProgress(position) {
-        console.log("updateProgress", position);
         if (this.isIE) {
-            console.log("updateProgress isIE");
-
             this.style(this.progressWave, { width: position + "px" });
         } else {
             let actualWidth = this.width / this.params.pixelRatio;

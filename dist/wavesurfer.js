@@ -1199,9 +1199,13 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
      */
 
     _this.barRadius = params.barRadius || 0;
-    _this.isIE =
-    /*@cc_on!@*/
-     false || !!document.documentMode;
+    /**
+     * Conditional for clip-path-based progress
+     *
+     * @type {boolean}
+     */
+
+    _this.isIE = !!document.documentMode;
     return _this;
   }
   /**
@@ -1725,10 +1729,7 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
   }, {
     key: "updateProgress",
     value: function updateProgress(position) {
-      console.log("updateProgress", position);
-
       if (this.isIE) {
-        console.log("updateProgress isIE");
         this.style(this.progressWave, {
           width: position + "px"
         });
