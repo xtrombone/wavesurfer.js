@@ -625,7 +625,10 @@ export default class MultiCanvas extends Drawer {
      * @param {number} position X-offset of progress position in pixels
      */
     updateProgress(position) {
+        console.log("updateProgress", position);
         if (this.isIE) {
+            console.log("updateProgress isIE");
+
             this.style(this.progressWave, { width: position + "px" });
         } else {
             let actualWidth = this.width / this.params.pixelRatio;

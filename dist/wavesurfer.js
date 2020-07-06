@@ -1725,7 +1725,10 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
   }, {
     key: "updateProgress",
     value: function updateProgress(position) {
+      console.log("updateProgress", position);
+
       if (this.isIE) {
+        console.log("updateProgress isIE");
         this.style(this.progressWave, {
           width: position + "px"
         });
