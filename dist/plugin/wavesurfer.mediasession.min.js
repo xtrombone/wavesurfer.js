@@ -1,5 +1,5 @@
 /*!
- * wavesurfer.js mediasession plugin 4.0.1 (2020-07-02)
+ * wavesurfer.js mediasession plugin 4.0.1 (2020-07-06)
  * https://github.com/katspaugh/wavesurfer.js
  * @license BSD-3-Clause
  */

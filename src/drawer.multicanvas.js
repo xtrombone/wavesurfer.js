@@ -1,6 +1,6 @@
-import Drawer from './drawer';
-import * as util from './util';
-import CanvasEntry from './drawer.canvasentry';
+import Drawer from "./drawer";
+import * as util from "./util";
+import CanvasEntry from "./drawer.canvasentry";
 
 /**
  * MultiCanvas renderer for wavesurfer. Is currently the default and sole
@@ -82,6 +82,7 @@ export default class MultiCanvas extends Drawer {
          * @type {number}
          */
         this.barRadius = params.barRadius || 0;
+        this.isIE = /*@cc_on!@*/ false || !!document.documentMode;
     }
 
     /**
@@ -98,18 +99,18 @@ export default class MultiCanvas extends Drawer {
      */
     createElements() {
         this.progressWave = this.wrapper.appendChild(
-            this.style(document.createElement('wave'), {
-                position: 'absolute',
+            this.style(document.createElement("wave"), {
+                position: "absolute",
                 zIndex: 3,
                 left: 0,
                 top: 0,
                 bottom: 0,
-                overflow: 'hidden',
-                width: '0',
-                display: 'none',
-                boxSizing: 'border-box',
-                borderRightStyle: 'solid',
-                pointerEvents: 'none'
+                overflow: "hidden",
+                width: "0",
+                display: "none",
+                boxSizing: "border-box",
+                borderRightStyle: "solid",
+                pointerEvents: "none",
             })
         );
 
@@ -122,8 +123,8 @@ export default class MultiCanvas extends Drawer {
      */
     updateCursor() {
         this.style(this.progressWave, {
-            borderRightWidth: this.params.cursorWidth + 'px',
-            borderRightColor: this.params.cursorColor
+            borderRightWidth: this.params.cursorWidth + "px",
+            borderRightColor: this.params.cursorColor,
         });
     }
 
@@ -157,8 +158,13 @@ export default class MultiCanvas extends Drawer {
             entry.clearWave();
         });
 
-        this.style(this.progressWave, { width: totalWidth + "px" });
-        this.style(this.progressWave, { "clip-path": this.makeInset(totalWidth), "-webkit-clip-path": this.makeInset(totalWidth)});
+        if (!this.isIE) {
+            this.style(this.progressWave, { width: totalWidth + "px" });
+            this.style(this.progressWave, {
+                "clip-path": this.makeInset(totalWidth),
+                "-webkit-clip-path": this.makeInset(totalWidth),
+            });
+        }
     }
 
     /**
@@ -175,14 +181,14 @@ export default class MultiCanvas extends Drawer {
         // wave
         entry.initWave(
             this.wrapper.appendChild(
-                this.style(document.createElement('canvas'), {
-                    position: 'absolute',
+                this.style(document.createElement("canvas"), {
+                    position: "absolute",
                     zIndex: 2,
-                    left: leftOffset + 'px',
+                    left: leftOffset + "px",
                     top: 0,
                     bottom: 0,
-                    height: '100%',
-                    pointerEvents: 'none'
+                    height: "100%",
+                    pointerEvents: "none",
                 })
             )
         );
@@ -191,12 +197,12 @@ export default class MultiCanvas extends Drawer {
         if (this.hasProgressCanvas) {
             entry.initProgress(
                 this.progressWave.appendChild(
-                    this.style(document.createElement('canvas'), {
-                        position: 'absolute',
-                        left: leftOffset + 'px',
+                    this.style(document.createElement("canvas"), {
+                        position: "absolute",
+                        left: leftOffset + "px",
                         top: 0,
                         bottom: 0,
-                        height: '100%'
+                        height: "100%",
                     })
                 )
             );
@@ -244,7 +250,7 @@ export default class MultiCanvas extends Drawer {
         entry.updateDimensions(elementWidth, totalWidth, width, height);
 
         // style element
-        this.style(this.progressWave, { display: 'block' });
+        this.style(this.progressWave, { display: "block" });
     }
 
     /**
@@ -252,7 +258,7 @@ export default class MultiCanvas extends Drawer {
      */
     clearWave() {
         util.frame(() => {
-            this.canvases.forEach(entry => entry.clearWave());
+            this.canvases.forEach((entry) => entry.clearWave());
         })();
     }
 
@@ -289,9 +295,9 @@ export default class MultiCanvas extends Drawer {
                     this.params.barGap === null
                         ? Math.max(this.params.pixelRatio, ~~(bar / 2))
                         : Math.max(
-                            this.params.pixelRatio,
-                            this.params.barGap * this.params.pixelRatio
-                        );
+                              this.params.pixelRatio,
+                              this.params.barGap * this.params.pixelRatio
+                          );
                 const step = bar + gap;
 
                 const scale = length / this.width;
@@ -305,9 +311,8 @@ export default class MultiCanvas extends Drawer {
                         peaks[Math.floor(i * scale * peakIndexScale)] || 0;
                     let h;
 
-                    if (this.params.reflection){
+                    if (this.params.reflection) {
                         h = Math.round((peak / absmax) * halfH);
-
                     } else {
                         h = Math.abs(Math.round((peak / absmax) * halfH));
                     }
@@ -316,7 +321,6 @@ export default class MultiCanvas extends Drawer {
                      * always draw *something* (normally a 1px high bar) */
                     if (h == 0 && this.params.barMinHeight)
                         h = this.params.barMinHeight;
-
 
                     this.fillRect(
                         i + this.halfPixel,
@@ -349,7 +353,15 @@ export default class MultiCanvas extends Drawer {
             channelIndex,
             start,
             end,
-            ({ absmax, hasMinVals, height, offsetY, halfH, peaks, channelIndex }) => {
+            ({
+                absmax,
+                hasMinVals,
+                height,
+                offsetY,
+                halfH,
+                peaks,
+                channelIndex,
+            }) => {
                 if (!hasMinVals) {
                     const reflectedPeaks = [];
                     const len = peaks.length;
@@ -364,7 +376,15 @@ export default class MultiCanvas extends Drawer {
                 // if drawWave was called within ws.empty we don't pass a start and
                 // end and simply want a flat line
                 if (start !== undefined) {
-                    this.drawLine(peaks, absmax, halfH, offsetY, start, end, channelIndex);
+                    this.drawLine(
+                        peaks,
+                        absmax,
+                        halfH,
+                        offsetY,
+                        start,
+                        end,
+                        channelIndex
+                    );
                 }
 
                 // always draw a median line
@@ -393,7 +413,8 @@ export default class MultiCanvas extends Drawer {
      * @param {channelIndex} channelIndex The channel index of the line drawn
      */
     drawLine(peaks, absmax, halfH, offsetY, start, end, channelIndex) {
-        const { waveColor, progressColor } = this.params.splitChannelsOptions.channelColors[channelIndex] || {};
+        const { waveColor, progressColor } =
+            this.params.splitChannelsOptions.channelColors[channelIndex] || {};
         this.canvases.forEach((entry, i) => {
             this.setFillStyles(entry, waveColor, progressColor);
             entry.drawLines(peaks, absmax, halfH, offsetY, start, end);
@@ -427,7 +448,7 @@ export default class MultiCanvas extends Drawer {
                     x + width,
                     i * this.maxCanvasWidth + entry.wave.width
                 ),
-                y2: y + height
+                y2: y + height,
             };
 
             if (intersection.x1 < intersection.x2) {
@@ -451,7 +472,12 @@ export default class MultiCanvas extends Drawer {
      * @returns {bool} True to hide the channel, false to draw.
      */
     hideChannel(channelIndex) {
-        return this.params.splitChannels && this.params.splitChannelsOptions.filterChannels.includes(channelIndex);
+        return (
+            this.params.splitChannels &&
+            this.params.splitChannelsOptions.filterChannels.includes(
+                channelIndex
+            )
+        );
     }
 
     /**
@@ -477,7 +503,9 @@ export default class MultiCanvas extends Drawer {
                 const channels = peaks;
 
                 if (this.params.splitChannels) {
-                    const filteredChannels =  channels.filter((c, i) => !this.hideChannel(i));
+                    const filteredChannels = channels.filter(
+                        (c, i) => !this.hideChannel(i)
+                    );
                     if (!this.params.splitChannelsOptions.overlay) {
                         this.setHeight(
                             Math.max(filteredChannels.length, 1) *
@@ -487,7 +515,14 @@ export default class MultiCanvas extends Drawer {
                     }
 
                     return channels.forEach((channelPeaks, i) =>
-                        this.prepareDraw(channelPeaks, i, start, end, fn, filteredChannels.indexOf(channelPeaks))
+                        this.prepareDraw(
+                            channelPeaks,
+                            i,
+                            start,
+                            end,
+                            fn,
+                            filteredChannels.indexOf(channelPeaks)
+                        )
                     );
                 }
                 peaks = channels[0];
@@ -510,7 +545,7 @@ export default class MultiCanvas extends Drawer {
 
             // Bar wave draws the bottom only as a reflection of the top,
             // so we don't need negative values
-            const hasMinVals = [].some.call(peaks, val => val < 0);
+            const hasMinVals = [].some.call(peaks, (val) => val < 0);
             const height = this.params.height * this.params.pixelRatio;
             const offsetY = height * drawIndex || 0;
             const halfH = height / 2;
@@ -534,7 +569,11 @@ export default class MultiCanvas extends Drawer {
      * @param {string} waveColor Wave color to draw this entry
      * @param {string} progressColor Progress color to draw this entry
      */
-    setFillStyles(entry, waveColor = this.params.waveColor, progressColor = this.params.progressColor) {
+    setFillStyles(
+        entry,
+        waveColor = this.params.waveColor,
+        progressColor = this.params.progressColor
+    ) {
         entry.setFillStyles(waveColor, progressColor);
     }
 
@@ -553,14 +592,14 @@ export default class MultiCanvas extends Drawer {
      * canvas.
      */
     getImage(format, quality, type) {
-        if (type === 'blob') {
+        if (type === "blob") {
             return Promise.all(
-                this.canvases.map(entry => {
+                this.canvases.map((entry) => {
                     return entry.getImage(format, quality, type);
                 })
             );
-        } else if (type === 'dataURL') {
-            let images = this.canvases.map(entry =>
+        } else if (type === "dataURL") {
+            let images = this.canvases.map((entry) =>
                 entry.getImage(format, quality, type)
             );
             return images.length > 1 ? images : images[0];
@@ -586,8 +625,15 @@ export default class MultiCanvas extends Drawer {
      * @param {number} position X-offset of progress position in pixels
      */
     updateProgress(position) {
-        let actualWidth = this.width / this.params.pixelRatio;
+        if (this.isIE) {
+            this.style(this.progressWave, { width: position + "px" });
+        } else {
+            let actualWidth = this.width / this.params.pixelRatio;
 
-        this.style(this.progressWave, { 'clip-path': this.makeInset(actualWidth - position), '-webkit-clip-path': this.makeInset(actualWidth - position)});
+            this.style(this.progressWave, {
+                "clip-path": this.makeInset(actualWidth - position),
+                "-webkit-clip-path": this.makeInset(actualWidth - position),
+            });
+        }
     }
 }

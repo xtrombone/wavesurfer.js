@@ -1,5 +1,5 @@
 /*!
- * wavesurfer.js 4.0.1 (2020-07-02)
+ * wavesurfer.js 4.0.1 (2020-07-06)
  * https://github.com/katspaugh/wavesurfer.js
  * @license BSD-3-Clause
  */
@@ -1199,6 +1199,9 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
      */
 
     _this.barRadius = params.barRadius || 0;
+    _this.isIE =
+    /*@cc_on!@*/
+     false || !!document.documentMode;
     return _this;
   }
   /**
@@ -1220,18 +1223,18 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
   }, {
     key: "createElements",
     value: function createElements() {
-      this.progressWave = this.wrapper.appendChild(this.style(document.createElement('wave'), {
-        position: 'absolute',
+      this.progressWave = this.wrapper.appendChild(this.style(document.createElement("wave"), {
+        position: "absolute",
         zIndex: 3,
         left: 0,
         top: 0,
         bottom: 0,
-        overflow: 'hidden',
-        width: '0',
-        display: 'none',
-        boxSizing: 'border-box',
-        borderRightStyle: 'solid',
-        pointerEvents: 'none'
+        overflow: "hidden",
+        width: "0",
+        display: "none",
+        boxSizing: "border-box",
+        borderRightStyle: "solid",
+        pointerEvents: "none"
       }));
       this.addCanvas();
       this.updateCursor();
@@ -1244,7 +1247,7 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
     key: "updateCursor",
     value: function updateCursor() {
       this.style(this.progressWave, {
-        borderRightWidth: this.params.cursorWidth + 'px',
+        borderRightWidth: this.params.cursorWidth + "px",
         borderRightColor: this.params.cursorColor
       });
     }
@@ -1280,13 +1283,16 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
 
         entry.clearWave();
       });
-      this.style(this.progressWave, {
-        width: totalWidth + "px"
-      });
-      this.style(this.progressWave, {
-        "clip-path": this.makeInset(totalWidth),
-        "-webkit-clip-path": this.makeInset(totalWidth)
-      });
+
+      if (!this.isIE) {
+        this.style(this.progressWave, {
+          width: totalWidth + "px"
+        });
+        this.style(this.progressWave, {
+          "clip-path": this.makeInset(totalWidth),
+          "-webkit-clip-path": this.makeInset(totalWidth)
+        });
+      }
     }
     /**
      * Add a canvas to the canvas list
@@ -1302,23 +1308,23 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
       entry.halfPixel = this.halfPixel;
       var leftOffset = this.maxCanvasElementWidth * this.canvases.length; // wave
 
-      entry.initWave(this.wrapper.appendChild(this.style(document.createElement('canvas'), {
-        position: 'absolute',
+      entry.initWave(this.wrapper.appendChild(this.style(document.createElement("canvas"), {
+        position: "absolute",
         zIndex: 2,
-        left: leftOffset + 'px',
+        left: leftOffset + "px",
         top: 0,
         bottom: 0,
-        height: '100%',
-        pointerEvents: 'none'
+        height: "100%",
+        pointerEvents: "none"
       }))); // progress
 
       if (this.hasProgressCanvas) {
-        entry.initProgress(this.progressWave.appendChild(this.style(document.createElement('canvas'), {
-          position: 'absolute',
-          left: leftOffset + 'px',
+        entry.initProgress(this.progressWave.appendChild(this.style(document.createElement("canvas"), {
+          position: "absolute",
+          left: leftOffset + "px",
           top: 0,
           bottom: 0,
-          height: '100%'
+          height: "100%"
         })));
       }
 
@@ -1365,7 +1371,7 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
       entry.updateDimensions(elementWidth, totalWidth, width, height); // style element
 
       this.style(this.progressWave, {
-        display: 'block'
+        display: "block"
       });
     }
     /**
@@ -1684,11 +1690,11 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
   }, {
     key: "getImage",
     value: function getImage(format, quality, type) {
-      if (type === 'blob') {
+      if (type === "blob") {
         return Promise.all(this.canvases.map(function (entry) {
           return entry.getImage(format, quality, type);
         }));
-      } else if (type === 'dataURL') {
+      } else if (type === "dataURL") {
         var images = this.canvases.map(function (entry) {
           return entry.getImage(format, quality, type);
         });
@@ -1719,11 +1725,17 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
   }, {
     key: "updateProgress",
     value: function updateProgress(position) {
-      var actualWidth = this.width / this.params.pixelRatio;
-      this.style(this.progressWave, {
-        'clip-path': this.makeInset(actualWidth - position),
-        '-webkit-clip-path': this.makeInset(actualWidth - position)
-      });
+      if (this.isIE) {
+        this.style(this.progressWave, {
+          width: position + "px"
+        });
+      } else {
+        var actualWidth = this.width / this.params.pixelRatio;
+        this.style(this.progressWave, {
+          "clip-path": this.makeInset(actualWidth - position),
+          "-webkit-clip-path": this.makeInset(actualWidth - position)
+        });
+      }
     }
   }]);
 

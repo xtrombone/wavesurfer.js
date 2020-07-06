@@ -12,7 +12,7 @@ module.exports = {
     output: {
         path: path.join(rootDir, 'dist'),
         filename: '[name].js',
-        library: 'WaveSurfer'
+        library: 'MultiCanvas'
     },
     plugins: [banner.libBanner]
 };
