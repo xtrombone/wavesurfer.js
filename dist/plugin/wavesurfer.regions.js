@@ -1,5 +1,5 @@
 /*!
- * wavesurfer.js regions plugin 4.0.1 (2020-07-06)
+ * wavesurfer.js regions plugin 4.0.1 (2020-07-10)
  * https://github.com/katspaugh/wavesurfer.js
  * @license BSD-3-Clause
  */

@@ -1,5 +1,5 @@
 /*!
- * wavesurfer.js 4.0.1 (2020-07-06)
+ * wavesurfer.js 4.0.1 (2020-07-10)
  * https://github.com/katspaugh/wavesurfer.js
  * @license BSD-3-Clause
  */
@@ -1205,7 +1205,7 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
      * @type {boolean}
      */
 
-    _this.isIE = !!document.documentMode;
+    _this.isIE = !!window.document.documentMode;
     return _this;
   }
   /**
