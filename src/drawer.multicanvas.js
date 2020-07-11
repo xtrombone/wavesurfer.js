@@ -88,7 +88,7 @@ export default class MultiCanvas extends Drawer {
          *
          * @type {boolean}
          */
-        this.isIE = !!document.documentMode;
+        this.isIE = !!window.document.documentMode;
     }
 
     /**
