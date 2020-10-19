@@ -1,5 +1,5 @@
 /*!
- * wavesurfer.js 4.0.1 (2020-07-10)
+ * wavesurfer.js 4.0.1 (2020-10-19)
  * https://github.com/katspaugh/wavesurfer.js
  * @license BSD-3-Clause
  */
@@ -1637,8 +1637,17 @@ var MultiCanvas = /*#__PURE__*/function (_Drawer) {
         var absmax = 1 / _this7.params.barHeight;
 
         if (_this7.params.normalize) {
-          var max = util.max(peaks);
-          var min = util.min(peaks);
+          var min = peaks[0],
+              max = peaks[0];
+
+          for (var i = 1; i < peaks.length; i++) {
+            var value = peaks[i];
+            min = value < min ? value : min;
+            max = value > max ? value : max;
+          } // const max = Math.max.apply(null, peaks);
+          // const min = Math.min.apply(null, peaks);
+
+
           absmax = -min > max ? -min : max;
         } // Bar wave draws the bottom only as a reflection of the top,
         // so we don't need negative values

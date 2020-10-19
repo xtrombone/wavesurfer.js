@@ -544,8 +544,16 @@ export default class MultiCanvas extends Drawer {
             // set
             let absmax = 1 / this.params.barHeight;
             if (this.params.normalize) {
-                const max = util.max(peaks);
-                const min = util.min(peaks);
+                
+
+                let min = peaks[0], max = peaks[0];
+                for(let i = 1; i < peaks.length; i++){
+                    let value = peaks[i];
+                    min = (value < min) ? value : min;
+                    max = (value > max) ? value : max;
+                }
+                // const max = Math.max.apply(null, peaks);
+                // const min = Math.min.apply(null, peaks);
                 absmax = -min > max ? -min : max;
             }
 
