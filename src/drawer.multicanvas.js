@@ -166,9 +166,10 @@ export default class MultiCanvas extends Drawer {
 
         if (!this.isIE) {
             this.style(this.progressWave, { width: totalWidth + "px" });
+            let cStyle = this.makeInset(totalWidth);
             this.style(this.progressWave, {
-                "clip-path": this.makeInset(totalWidth),
-                "-webkit-clip-path": this.makeInset(totalWidth),
+                "clip-path": cStyle,
+                "-webkit-clip-path": cStyle,
             });
         }
     }
@@ -643,10 +644,10 @@ export default class MultiCanvas extends Drawer {
             this.style(this.progressWave, { width: position + "px" });
         } else {
             let actualWidth = this.width / this.params.pixelRatio;
-
+            let cStyle = this.makeInset(actualWidth - position);
             this.style(this.progressWave, {
-                "clip-path": this.makeInset(actualWidth - position),
-                "-webkit-clip-path": this.makeInset(actualWidth - position),
+                "clip-path": cStyle,
+                "-webkit-clip-path": cStyle,
             });
         }
     }
